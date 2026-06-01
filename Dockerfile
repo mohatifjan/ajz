@@ -1,6 +1,9 @@
 # Stage 1: Build backend
 FROM node:18-alpine AS backend-build
 
+# Install build dependencies for native npm packages (canvas)
+RUN apk add --no-cache python3 make g++ cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev pixman-dev
+
 WORKDIR /app/backend
 
 COPY backend/package*.json ./
@@ -24,8 +27,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install MongoDB and other dependencies
-RUN apk add --no-cache mongodb-tools
+# Install MongoDB and runtime dependencies for canvas
+RUN apk add --no-cache mongodb-tools cairo pango jpeg giflib librsvg pixman
 
 # Copy backend from build stage
 COPY --from=backend-build /app/backend /app/backend
