@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
-      process.env.MONGODB_URI || 'mongodb://localhost:27017/ajz_pos',
+      process.env.MONGODB_URI || 'mongodb+srv://mohatifjan_db_user:Db25051999@pos.owk6bss.mongodb.net/ajz_pos?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
