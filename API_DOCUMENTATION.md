@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-http://localhost:5000/api
+https://ajz-production.up.railway.app/,http://localhost:5000/api
 ```
 
 ## Authentication
