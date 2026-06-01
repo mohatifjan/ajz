@@ -169,6 +169,21 @@ export const exportAPI = {
   }
 };
 
+export const auditLogAPI = {
+  getLogs: (params) => apiClient.get('/audit', { params }),
+  getStatistics: () => apiClient.get('/audit/statistics')
+};
+
+export const backupAPI = {
+  list: () => apiClient.get('/backup/list'),
+  getStatus: () => apiClient.get('/backup/status'),
+  create: (data) => apiClient.post('/backup/create', data),
+  restore: (data) => apiClient.post('/backup/restore', data),
+  delete: (backupName) => apiClient.delete(`/backup/${backupName}`),
+  schedule: (data) => apiClient.post('/backup/schedule', data),
+  exportJson: () => apiClient.get('/backup/export/json', { responseType: 'blob' })
+};
+
 export const barcodeAPI = {
   generateProductBarcode: (productId, params) => apiClient.get(`/barcode/product/${productId}/barcode`, { params, responseType: 'blob' }),
   generateQRCode: (productId, params) => apiClient.get(`/barcode/product/${productId}/qrcode`, { params }),
