@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { auditLogAPI } from '../services/api';
 import { Eye, Trash2, BarChart3, Download } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -32,11 +32,7 @@ export default function AuditPage() {
   const fetchLogs = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/audit', {
-        params: filters,
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await auditLogAPI.getLogs(filters);
       if (response.data.success) {
         setLogs(response.data.data);
         setTotalPages(response.data.pagination.totalPages);
@@ -50,10 +46,7 @@ export default function AuditPage() {
 
   const fetchStatistics = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/audit/statistics', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await auditLogAPI.getStatistics();
       if (response.data.success) {
         setStatistics(response.data.data);
       }

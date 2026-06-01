@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { backupAPI } from '../services/api';
 import { Database, Download, Trash2, Play, Save, BarChart3 } from 'lucide-react';
 
 export default function BackupPage() {
@@ -21,10 +21,7 @@ export default function BackupPage() {
 
   const fetchBackups = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/backup/list', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await backupAPI.list();
       if (response.data.success) {
         setBackups(response.data.data);
       }
@@ -35,10 +32,7 @@ export default function BackupPage() {
 
   const fetchBackupStatus = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/backup/status', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await backupAPI.getStatus();
       if (response.data.success) {
         setBackupStatus(response.data.data);
       }
@@ -51,11 +45,8 @@ export default function BackupPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.post('http://localhost:5000/api/backup/create', {
+      const response = await backupAPI.create({
         backupName: backupName || `backup_${new Date().toLocaleString()}`
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.data.success) {
@@ -81,12 +72,7 @@ export default function BackupPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.post('http://localhost:5000/api/backup/restore', {
-        backupName: backup.name
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await backupAPI.restore({ backupName: backup.name });
 
       if (response.data.success) {
         setSuccess('Backup restored successfully');
@@ -105,10 +91,7 @@ export default function BackupPage() {
     }
 
     try {
-      const token = localStorage.getItem('accessToken');
-      await axios.delete(`http://localhost:5000/api/backup/${backupName}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await backupAPI.delete(backupName);
       setSuccess('Backup deleted successfully');
       setTimeout(() => {
         fetchBackups();
@@ -122,12 +105,7 @@ export default function BackupPage() {
   const handleScheduleBackup = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.post('http://localhost:5000/api/backup/schedule', {
-        cronExpression
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await backupAPI.schedule({ cronExpression });
 
       if (response.data.success) {
         setSuccess(response.data.message);
@@ -143,11 +121,7 @@ export default function BackupPage() {
 
   const handleExportDatabase = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/backup/export/json', {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob'
-      });
+      const response = await backupAPI.exportJson();
 
       const url = URL.createObjectURL(response.data);
       const a = document.createElement('a');
