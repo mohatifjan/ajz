@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "git": "^0.1.5",
+    "mongodb": "^7.2.0"
+  }
+}

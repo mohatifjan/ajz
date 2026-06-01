@@ -1,0 +1,33 @@
+{
+  "name": "ajz-pos-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "AJZ POS and Inventory Management Frontend",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
+    "axios": "^1.5.0",
+    "zustand": "^4.4.1",
+    "recharts": "^2.8.0",
+    "date-fns": "^2.30.0",
+    "react-icons": "^4.11.0",
+    "tailwindcss": "^3.3.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.263.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.3",
+    "vite": "^4.4.9",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.29",
+    "@tailwindcss/forms": "^0.5.4"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx"
+  }
+}
