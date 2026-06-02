@@ -38,6 +38,10 @@ export default function Layout({ children }) {
     { label: 'Reports', path: '/reports', icon: BarChart3 }
   ];
 
+  if (user?.role === 'admin') {
+    menuItems.push({ label: 'Users', path: '/users', icon: Users });
+  }
+
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
@@ -75,11 +79,10 @@ export default function Layout({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive(item.path)
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(item.path)
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-400 hover:bg-gray-800'
-                }`}
+                  }`}
               >
                 <Icon size={20} />
                 {sidebarOpen && <span>{item.label}</span>}

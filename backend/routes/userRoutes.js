@@ -5,7 +5,8 @@ import {
   updateUser,
   changePassword,
   deactivateUser,
-  deleteUser
+  deleteUser,
+  createUser
 } from '../controllers/userController.js';
 import { authenticateToken, authorize } from '../middleware/auth.js';
 
@@ -16,6 +17,9 @@ router.use(authenticateToken);
 
 // Get all users (Admin only)
 router.get('/', authorize('admin'), getAllUsers);
+
+// Create user (Admin only)
+router.post('/', authorize('admin'), createUser);
 
 // Get user by ID
 router.get('/:id', getUserById);

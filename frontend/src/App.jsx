@@ -12,15 +12,16 @@ import StockAuditPage from './pages/StockAuditPage';
 import SuppliersPage from './pages/SuppliersPage';
 import PurchaseOrdersPage from './pages/PurchaseOrdersPage';
 import ReportsPage from './pages/ReportsPage';
+import UserManagementPage from './pages/UserManagementPage';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -36,7 +37,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        
+
         <Route
           path="/*"
           element={
@@ -53,6 +54,7 @@ export default function App() {
                   <Route path="/suppliers" element={<SuppliersPage />} />
                   <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
                   <Route path="/reports" element={<ReportsPage />} />
+                  <Route path="/users" element={<UserManagementPage />} />
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
               </Layout>

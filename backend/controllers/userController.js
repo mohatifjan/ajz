@@ -169,3 +169,52 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ status: 'error', errors: errors.array() });
+    }
+
+    const { firstName, lastName, email, phone, password, role, department } = req.body;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'User with this email already exists'
+      });
+    }
+
+    // Create new user
+    user = new User({
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+      role: role || 'staff',
+      department: department || 'sales'
+    });
+
+    await user.save();
+
+    res.status(201).json({
+      status: 'success',
+      message: 'User created successfully',
+      data: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        department: user.department,
+        phone: user.phone
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};

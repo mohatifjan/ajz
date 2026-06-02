@@ -109,6 +109,7 @@ export const dashboardAPI = {
 export const userAPI = {
   getAll: (params) => apiClient.get('/users', { params }),
   getById: (id) => apiClient.get(`/users/${id}`),
+  create: (data) => apiClient.post('/users', data),
   update: (id, data) => apiClient.put(`/users/${id}`, data),
   changePassword: (data) => apiClient.put('/users/change-password', data),
   deactivate: (id) => apiClient.patch(`/users/${id}/deactivate`),
