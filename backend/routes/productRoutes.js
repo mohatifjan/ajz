@@ -26,7 +26,7 @@ router.get('/:id', getProductById);
 router.post(
   '/',
   authenticateToken,
-  authorize('admin', 'manager'),
+  authorize('admin', 'manager', 'products'),
   [
     body('sku').trim().notEmpty().withMessage('SKU is required'),
     body('name').trim().notEmpty().withMessage('Product name is required'),
@@ -38,7 +38,7 @@ router.post(
 );
 
 // Update product
-router.put('/:id', authenticateToken, authorize('admin', 'manager'), updateProduct);
+router.put('/:id', authenticateToken, authorize('admin', 'manager', 'products'), updateProduct);
 
 // Update stock
 router.patch(

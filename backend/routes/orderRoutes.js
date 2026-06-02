@@ -22,6 +22,7 @@ router.get('/:id', authenticateToken, getOrderById);
 router.post(
   '/',
   authenticateToken,
+  authorize('admin', 'manager', 'orders', 'invoices'),
   [
     body('customer').notEmpty().withMessage('Customer is required'),
     body('items').isArray().withMessage('Items must be an array'),
@@ -34,7 +35,7 @@ router.post(
 router.patch(
   '/:id/status',
   authenticateToken,
-  authorize('admin', 'manager'),
+  authorize('admin', 'manager', 'orders', 'invoices'),
   updateOrderStatus
 );
 
@@ -50,6 +51,6 @@ router.post(
 );
 
 // Delete order (Admin only)
-router.delete('/:id', authenticateToken, authorize('admin'), deleteOrder);
+router.delete('/:id', authenticateToken, authorize('admin', 'manager', 'orders'), deleteOrder);
 
 export default router;

@@ -38,10 +38,14 @@ export const authorize = (...allowedRoles) => {
       });
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    const userPermissions = req.user.permissions || [];
+    const hasRole = allowedRoles.includes(req.user.role);
+    const hasPermission = allowedRoles.some(p => userPermissions.includes(p));
+
+    if (!hasRole && !hasPermission) {
       return res.status(403).json({
         status: 'error',
-        message: `Access denied. Required roles: ${allowedRoles.join(', ')}`
+        message: `Access denied. Insufficient permissions.`
       });
     }
 

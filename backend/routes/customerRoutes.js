@@ -33,6 +33,7 @@ router.get('/:id', authenticateToken, getCustomerById);
 router.post(
   '/',
   authenticateToken,
+  authorize('admin', 'manager', 'customers'),
   [
     body('companyName').trim().notEmpty().withMessage('Company name is required'),
     body('email').isEmail().withMessage('Valid email is required'),
@@ -44,9 +45,9 @@ router.post(
 );
 
 // Update customer
-router.put('/:id', authenticateToken, updateCustomer);
+router.put('/:id', authenticateToken, authorize('admin', 'manager', 'customers'), updateCustomer);
 
 // Delete customer (Admin only)
-router.delete('/:id', authenticateToken, authorize('admin'), deleteCustomer);
+router.delete('/:id', authenticateToken, authorize('admin', 'manager', 'customers'), deleteCustomer);
 
 export default router;

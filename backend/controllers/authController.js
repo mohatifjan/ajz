@@ -4,7 +4,7 @@ import { validationResult } from 'express-validator';
 
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
-    { id: user._id, email: user.email, role: user.role },
+    { id: user._id, email: user.email, role: user.role, permissions: user.permissions || [] },
     process.env.JWT_SECRET || 'your_super_secret_jwt_key',
     { expiresIn: process.env.JWT_EXPIRE || '7d' }
   );
