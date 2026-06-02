@@ -26,21 +26,20 @@ export default function Layout({ children }) {
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Products', path: '/products', icon: Package },
-    { label: 'Customers', path: '/customers', icon: Users },
-    { label: 'Orders', path: '/orders', icon: ShoppingCart },
-    { label: 'Invoices', path: '/invoices', icon: FileText },
-    { label: 'Customer Ledger', path: '/customer-ledger', icon: ClipboardList },
-    { label: 'Stock Audits', path: '/audits', icon: ClipboardCheck },
-    { label: 'Suppliers', path: '/suppliers', icon: Truck },
-    { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt },
-    { label: 'Reports', path: '/reports', icon: BarChart3 }
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'staff'] },
+    { label: 'Products', path: '/products', icon: Package, roles: ['admin', 'manager', 'staff'] },
+    { label: 'Customers', path: '/customers', icon: Users, roles: ['admin', 'manager', 'staff'] },
+    { label: 'Orders', path: '/orders', icon: ShoppingCart, roles: ['admin', 'manager', 'staff'] },
+    { label: 'Invoices', path: '/invoices', icon: FileText, roles: ['admin', 'manager', 'staff'] },
+    { label: 'Customer Ledger', path: '/customer-ledger', icon: ClipboardList, roles: ['admin', 'manager'] },
+    { label: 'Stock Audits', path: '/audits', icon: ClipboardCheck, roles: ['admin', 'manager'] },
+    { label: 'Suppliers', path: '/suppliers', icon: Truck, roles: ['admin', 'manager'] },
+    { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt, roles: ['admin', 'manager'] },
+    { label: 'Reports', path: '/reports', icon: BarChart3, roles: ['admin', 'manager'] },
+    { label: 'Users', path: '/users', icon: Users, roles: ['admin'] }
   ];
 
-  if (user?.role === 'admin') {
-    menuItems.push({ label: 'Users', path: '/users', icon: Users });
-  }
+  const filteredMenuItems = menuItems.filter(item => item.roles.includes(user?.role));
 
   const handleLogout = () => {
     logout();
@@ -73,15 +72,15 @@ export default function Layout({ children }) {
 
         {/* Menu Items */}
         <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item) => {
+          {filteredMenuItems.map((item) => {
             const Icon = item.icon;
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(item.path)
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:bg-gray-800'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-400 hover:bg-gray-800'
                   }`}
               >
                 <Icon size={20} />
@@ -109,7 +108,7 @@ export default function Layout({ children }) {
         <header className="bg-white shadow">
           <div className="px-8 py-4 flex justify-between items-center">
             <h1 className="text-2xl font-semibold text-gray-900">
-              {menuItems.find(m => isActive(m.path))?.label || 'Dashboard'}
+              {filteredMenuItems.find(m => isActive(m.path))?.label || 'Dashboard'}
             </h1>
             <div className="flex items-center gap-4">
               <div className="text-right">

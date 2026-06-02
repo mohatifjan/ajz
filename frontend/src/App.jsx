@@ -25,6 +25,16 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const RoleProtectedRoute = ({ children, allowedRoles }) => {
+  const user = useAuthStore((state) => state.user);
+
+  if (!allowedRoles.includes(user?.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 export default function App() {
   const loadUser = useAuthStore((state) => state.loadUser);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -49,12 +59,12 @@ export default function App() {
                   <Route path="/customers" element={<CustomersPage />} />
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/invoices" element={<InvoicesPage />} />
-                  <Route path="/customer-ledger" element={<LedgerPage />} />
-                  <Route path="/audits" element={<StockAuditPage />} />
-                  <Route path="/suppliers" element={<SuppliersPage />} />
-                  <Route path="/purchase-orders" element={<PurchaseOrdersPage />} />
-                  <Route path="/reports" element={<ReportsPage />} />
-                  <Route path="/users" element={<UserManagementPage />} />
+                  <Route path="/customer-ledger" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><LedgerPage /></RoleProtectedRoute>} />
+                  <Route path="/audits" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><StockAuditPage /></RoleProtectedRoute>} />
+                  <Route path="/suppliers" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><SuppliersPage /></RoleProtectedRoute>} />
+                  <Route path="/purchase-orders" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><PurchaseOrdersPage /></RoleProtectedRoute>} />
+                  <Route path="/reports" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><ReportsPage /></RoleProtectedRoute>} />
+                  <Route path="/users" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagementPage /></RoleProtectedRoute>} />
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
               </Layout>
