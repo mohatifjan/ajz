@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../services/api';
 import { Eye, Trash2, BarChart3, Download } from 'lucide-react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -32,10 +32,8 @@ export default function AuditPage() {
   const fetchLogs = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/audit', {
-        params: filters,
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await apiClient.get('/audit', {
+        params: filters
       });
       if (response.data.success) {
         setLogs(response.data.data);
@@ -50,10 +48,7 @@ export default function AuditPage() {
 
   const fetchStatistics = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://localhost:5000/api/audit/statistics', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await apiClient.get('/audit/statistics');
       if (response.data.success) {
         setStatistics(response.data.data);
       }
@@ -256,9 +251,8 @@ export default function AuditPage() {
                     <td className="px-6 py-4 text-sm font-medium text-blue-600">{log.action}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{log.entityType}</td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        log.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${log.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
                         {log.status}
                       </span>
                     </td>
