@@ -203,9 +203,7 @@ export default function OrdersPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Order Total</label>
-                <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 font-semibold">
-                  ${orderTotal.toFixed(2)}
-                </div>
+                Rs. {orderTotal.toFixed(2)}
               </div>
             </div>
 
@@ -269,7 +267,7 @@ export default function OrdersPage() {
                       Remove
                     </button>
                     <div className="text-sm text-slate-700">
-                      Total: ${(item.quantity * item.unitPrice - item.discount + item.tax).toFixed(2)}
+                      Total: Rs. {(item.quantity * item.unitPrice - item.discount + item.tax).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -330,22 +328,20 @@ export default function OrdersPage() {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{order.orderNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{order.customer?.companyName}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">${parseFloat(order.summary?.totalAmount || 0).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">Rs. {parseFloat(order.summary?.totalAmount || 0).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                      order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                          'bg-blue-100 text-blue-800'
+                      }`}>
                       {order.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                      order.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                        order.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                      }`}>
                       {order.paymentStatus}
                     </span>
                   </td>

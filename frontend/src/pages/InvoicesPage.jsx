@@ -55,7 +55,7 @@ export default function InvoicesPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
-          <p className="text-gray-600 mt-2">Search by invoice number, review billing records, and print AJZ invoices.</p>
+          <p className="text-gray-600 mt-2">Search by invoice number, review billing records, and print AJ Traders invoices.</p>
         </div>
         <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
           <input

@@ -118,8 +118,9 @@ export default function ReportsPage() {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-PK', {
       style: 'currency',
-      currency: 'PKR'
-    }).format(amount);
+      currency: 'PKR',
+      minimumFractionDigits: 0
+    }).format(amount || 0).replace('PKR', 'Rs.');
   };
 
   if (isLoading) {
@@ -393,7 +394,7 @@ export default function ReportsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                  {(customerOutstandingReport?.customers || []).map((customer, index) => (
+                {(customerOutstandingReport?.customers || []).map((customer, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {customer.customerName}

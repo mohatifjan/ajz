@@ -1,10 +1,11 @@
 // Utility functions for formatting and calculations
 
 export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-PK', {
     style: 'currency',
-    currency: 'USD'
-  }).format(amount || 0);
+    currency: 'PKR',
+    minimumFractionDigits: 0
+  }).format(amount || 0).replace('PKR', 'Rs.');
 };
 
 export const formatDate = (date) => {
