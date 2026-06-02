@@ -26,20 +26,22 @@ export default function Layout({ children }) {
   const location = useLocation();
 
   const menuItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'staff'] },
-    { label: 'Products', path: '/products', icon: Package, roles: ['admin', 'manager', 'staff'] },
-    { label: 'Customers', path: '/customers', icon: Users, roles: ['admin', 'manager', 'staff'] },
-    { label: 'Orders', path: '/orders', icon: ShoppingCart, roles: ['admin', 'manager', 'staff'] },
-    { label: 'Invoices', path: '/invoices', icon: FileText, roles: ['admin', 'manager', 'staff'] },
-    { label: 'Customer Ledger', path: '/customer-ledger', icon: ClipboardList, roles: ['admin', 'manager'] },
-    { label: 'Stock Audits', path: '/audits', icon: ClipboardCheck, roles: ['admin', 'manager'] },
-    { label: 'Suppliers', path: '/suppliers', icon: Truck, roles: ['admin', 'manager'] },
-    { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt, roles: ['admin', 'manager'] },
-    { label: 'Reports', path: '/reports', icon: BarChart3, roles: ['admin', 'manager'] },
-    { label: 'Users', path: '/users', icon: Users, roles: ['admin'] }
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'staff'], permission: 'dashboard' },
+    { label: 'Products', path: '/products', icon: Package, roles: ['admin', 'manager'], permission: 'products' },
+    { label: 'Customers', path: '/customers', icon: Users, roles: ['admin', 'manager'], permission: 'customers' },
+    { label: 'Orders', path: '/orders', icon: ShoppingCart, roles: ['admin', 'manager'], permission: 'orders' },
+    { label: 'Invoices', path: '/invoices', icon: FileText, roles: ['admin', 'manager'], permission: 'invoices' },
+    { label: 'Customer Ledger', path: '/customer-ledger', icon: ClipboardList, roles: ['admin', 'manager'], permission: 'reports' },
+    { label: 'Stock Audits', path: '/audits', icon: ClipboardCheck, roles: ['admin', 'manager'], permission: 'audits' },
+    { label: 'Suppliers', path: '/suppliers', icon: Truck, roles: ['admin', 'manager'], permission: 'suppliers' },
+    { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt, roles: ['admin', 'manager'], permission: 'suppliers' },
+    { label: 'Reports', path: '/reports', icon: BarChart3, roles: ['admin', 'manager'], permission: 'reports' },
+    { label: 'Users', path: '/users', icon: Users, roles: ['admin'], permission: 'users' }
   ];
 
-  const filteredMenuItems = menuItems.filter(item => item.roles.includes(user?.role));
+  const filteredMenuItems = menuItems.filter(item =>
+    item.roles.includes(user?.role) || (user?.permissions && user.permissions.includes(item.permission))
+  );
 
   const handleLogout = () => {
     logout();

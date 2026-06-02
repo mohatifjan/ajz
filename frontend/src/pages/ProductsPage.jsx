@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productAPI } from '../services/api';
-import { Edit, Trash2, Plus, X } from 'lucide-react';
+import { Edit, Trash2, Plus, X, Package } from 'lucide-react';
 
 const initialProductForm = {
   sku: '',
@@ -9,6 +9,7 @@ const initialProductForm = {
   costPrice: '',
   sellingPrice: '',
   description: '',
+  image: '',
   status: 'active',
   reorderLevel: 0
 };
@@ -57,6 +58,7 @@ export default function ProductsPage() {
       costPrice: product.costPrice || '',
       sellingPrice: product.sellingPrice || '',
       description: product.description || '',
+      image: product.image || '',
       status: product.status || 'active',
       reorderLevel: product.stocks?.reorderLevel || 0
     });
@@ -205,13 +207,24 @@ export default function ProductsPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <div className="md:col-span-2 space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Product Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                rows={3}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all text-sm font-medium"
+                placeholder="..."
+              />
+            </div>
+            <div className="md:col-span-2 space-y-1.5">
+              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Image URL (Thumbnail)</label>
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 transition-all text-sm font-medium"
+                placeholder="https://example.com/image.png"
               />
             </div>
             <div className="md:col-span-2 flex justify-end gap-3">
@@ -244,21 +257,34 @@ export default function ProductsPage() {
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-100 border-b">
+            <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">SKU</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Cost Price</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Selling Price</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Stock</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Image</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">SKU</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Cost Price</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Selling Price</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Stock</th>
+                <th className="px-6 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-50">
               {products.map((product) => (
-                <tr key={product._id} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{product.sku}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{product.name}</td>
+                <tr key={product._id} className="hover:bg-blue-50/30 transition-all group">
+                  <td className="px-6 py-4">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100">
+                      {product.image ? (
+                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Package size={20} className="text-gray-300" />
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-bold text-gray-900">{product.sku}</td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-bold text-gray-900">{product.name}</div>
+                    <div className="text-[11px] text-gray-400">{product.category?.name || 'Uncategorized'}</div>
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-700">Rs. {parseFloat(product.costPrice).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">Rs. {parseFloat(product.sellingPrice).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm">

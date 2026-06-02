@@ -60,7 +60,8 @@ export const register = async (req, res, next) => {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
-          phone: user.phone
+          phone: user.phone,
+          permissions: user.permissions || []
         },
         accessToken,
         refreshToken
@@ -133,7 +134,8 @@ export const login = async (req, res, next) => {
           email: user.email,
           role: user.role,
           department: user.department,
-          phone: user.phone
+          phone: user.phone,
+          permissions: user.permissions || []
         },
         accessToken,
         refreshToken
