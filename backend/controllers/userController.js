@@ -3,11 +3,19 @@ import { validationResult } from 'express-validator';
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, role, status = 'active' } = req.query;
+    const { page = 1, limit = 20, role, status, search } = req.query;
 
     const query = {};
     if (role) query.role = role;
     if (status) query.status = status;
+
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
 
     const skip = (page - 1) * limit;
 
