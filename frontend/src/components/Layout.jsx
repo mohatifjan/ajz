@@ -59,7 +59,7 @@ export default function Layout({ children }) {
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <div>
-                <h1 className="text-xl font-bold">AJZ POS</h1>
+                <h1 className="text-4xl font-black text-slate-900 tracking-tighter">AJ Traders</h1>
                 <p className="text-xs text-gray-400">Inventory System</p>
               </div>
             )}
@@ -117,7 +117,7 @@ export default function Layout({ children }) {
                 <p className="text-sm font-medium text-gray-900">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs text-gray-600 capitalize">{user?.role}</p>
+                <span className="text-xl font-black text-indigo-600 tracking-tighter uppercase whitespace-nowrap">AJ Traders</span>
               </div>
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
                 {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
