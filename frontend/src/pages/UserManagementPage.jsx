@@ -25,7 +25,7 @@ export default function UserManagementPage() {
         try {
             setIsLoading(true);
             const response = await userAPI.getAll();
-            if (response.data.success) {
+            if (response.data.status === 'success') {
                 setUsers(response.data.data);
             }
         } catch (err) {
@@ -45,7 +45,7 @@ export default function UserManagementPage() {
         try {
             setIsLoading(true);
             const response = await userAPI.create(formData);
-            if (response.data.success) {
+            if (response.data.status === 'success') {
                 setShowModal(false);
                 setFormData({
                     firstName: '',
@@ -137,7 +137,7 @@ export default function UserManagementPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                                u.role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                                            u.role === 'manager' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
                                             }`}>
                                             {u.role}
                                         </span>
