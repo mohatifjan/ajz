@@ -61,8 +61,8 @@ export default function Layout({ children }) {
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <div>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tighter">AJ Traders</h1>
-                <p className="text-xs text-gray-400">Inventory System</p>
+                <h1 className="text-4xl font-black text-white tracking-tighter">AJ Traders</h1>
+                <p className="text-xs text-gray-300">Inventory System</p>
               </div>
             )}
             <button
@@ -84,7 +84,7 @@ export default function Layout({ children }) {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(item.path)
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-800'
+                  : 'text-gray-300 hover:bg-gray-800'
                   }`}
               >
                 <Icon size={20} />
@@ -98,7 +98,7 @@ export default function Layout({ children }) {
         <div className="p-4 border-t border-gray-800">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-gray-400 hover:bg-gray-800 rounded-lg transition-colors"
+            className="flex items-center gap-3 px-4 py-3 w-full text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
           >
             <LogOut size={20} />
             {sidebarOpen && <span>Logout</span>}

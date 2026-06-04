@@ -284,7 +284,7 @@ export default function UserManagementPage() {
                                         <div className="flex items-center gap-2">
                                             <Shield size={14} className={u.role === 'admin' ? 'text-purple-500' : 'text-blue-500'} />
                                             <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${u.role === 'admin' ? 'bg-purple-50 text-purple-600' :
-                                                    u.role === 'manager' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
+                                                u.role === 'manager' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
                                                 }`}>
                                                 {u.role}
                                             </span>
@@ -302,8 +302,8 @@ export default function UserManagementPage() {
                                     </td>
                                     <td className="px-6 py-5">
                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest border transition-all ${u.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                                                u.status === 'suspended' ? 'bg-amber-50 text-amber-600 border-amber-100' :
-                                                    'bg-red-50 text-red-600 border-red-100'
+                                            u.status === 'suspended' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                                                'bg-red-50 text-red-600 border-red-100'
                                             }`}>
                                             <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-current'}`}></span>
                                             {u.status}
@@ -497,8 +497,8 @@ export default function UserManagementPage() {
                                                     <label
                                                         key={opt.id}
                                                         className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${formData.permissions.includes(opt.id)
-                                                                ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-200'
-                                                                : 'bg-white border-gray-100 hover:border-gray-300'
+                                                            ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-200'
+                                                            : 'bg-white border-gray-100 hover:border-gray-300'
                                                             }`}
                                                     >
                                                         <span className={`text-xs font-bold ${formData.permissions.includes(opt.id) ? 'text-blue-700' : 'text-gray-600'}`}>
