@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { dashboardAPI, exportAPI } from '../services/api';
+import { formatCurrency } from '../utils/formatters';
 import { Download, Calendar, TrendingUp, DollarSign, Package, Users, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
@@ -113,14 +114,6 @@ export default function ReportsPage() {
     } finally {
       setIsExporting(false);
     }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-PK', {
-      style: 'currency',
-      currency: 'PKR',
-      minimumFractionDigits: 0
-    }).format(amount || 0).replace('PKR', 'Rs.');
   };
 
   if (isLoading) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productAPI } from '../services/api';
+import { formatCurrency } from '../utils/formatters';
 import {
   Edit, Trash2, Plus, X, Package,
   LayoutGrid, List, Search, Filter,
@@ -419,14 +420,14 @@ export default function ProductsPage() {
                     <h3 className="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">{product.name}</h3>
                   </div>
                 </div>
-                <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-50">
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">MSRP</span>
-                    <span className="text-2xl font-black text-slate-900">Rs {parseFloat(product.sellingPrice).toLocaleString()}</span>
+                    <span className="text-2xl font-black text-slate-900">{formatCurrency(product.sellingPrice)}</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Cost</span>
-                    <span className="text-sm font-black text-slate-500 italic">Rs {parseFloat(product.costPrice).toLocaleString()}</span>
+                    <span className="text-sm font-black text-slate-500 italic">{formatCurrency(product.costPrice)}</span>
                   </div>
                 </div>
               </div>
@@ -469,8 +470,8 @@ export default function ProductsPage() {
                     </td>
                     <td className="px-10 py-8">
                       <div className="flex flex-col">
-                        <span className="text-lg font-black text-slate-900">Rs {parseFloat(product.sellingPrice).toLocaleString()}</span>
-                        <span className="text-[11px] font-bold text-emerald-600 mt-1 uppercase tracking-widest">Yield: Rs {Math.max(0, product.sellingPrice - product.costPrice).toLocaleString()}</span>
+                        <span className="text-lg font-black text-slate-900">{formatCurrency(product.sellingPrice)}</span>
+                        <span className="text-[11px] font-bold text-emerald-600 mt-1 uppercase tracking-widest">Yield: {formatCurrency(Math.max(0, product.sellingPrice - product.costPrice))}</span>
                       </div>
                     </td>
                     <td className="px-10 py-8">

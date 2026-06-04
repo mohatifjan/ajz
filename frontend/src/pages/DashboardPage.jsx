@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { dashboardAPI } from '../services/api';
+import { formatCurrency } from '../utils/formatters';
 import DashboardMetrics from '../components/DashboardMetrics';
 import SalesChart from '../components/SalesChart';
 import CustomerIntelligence from '../components/CustomerIntelligence';
@@ -87,36 +88,36 @@ export default function DashboardPage() {
             <div className="bg-slate-50 rounded-lg p-4">
               <p className="text-sm text-gray-600">Total Revenue</p>
               <p className="text-2xl font-bold text-green-600 mt-2">
-                Rs. {(dashboardData.revenue.totalRevenue?.totalRevenue || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                {formatCurrency(dashboardData.revenue.totalRevenue?.totalRevenue || 0)}
               </p>
             </div>
             <div className="bg-slate-50 rounded-lg p-4">
               <p className="text-sm text-gray-600">Gross Profit</p>
               <p className="text-2xl font-bold text-emerald-600 mt-2">
-                Rs. {(dashboardData.revenue.totalRevenue?.totalProfit || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                {formatCurrency(dashboardData.revenue.totalRevenue?.totalProfit || 0)}
               </p>
             </div>
             <div className="bg-slate-50 rounded-lg p-4">
               <p className="text-sm text-gray-600">Outstanding Receivables</p>
               <p className="text-2xl font-bold text-red-600 mt-2">
-                Rs. {(dashboardData.revenue.outstandingReceivables?.totalOutstanding || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                {formatCurrency(dashboardData.revenue.outstandingReceivables?.totalOutstanding || 0)}
               </p>
             </div>
             <div className="bg-slate-50 rounded-lg p-4">
               <p className="text-sm text-gray-600">Revenue Last 30 Days</p>
               <p className="text-2xl font-bold text-blue-600 mt-2">
-                Rs. {(dashboardData.revenue.revenueLastMonth?.revenue || 0).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                {formatCurrency(dashboardData.revenue.revenueLastMonth?.revenue || 0)}
               </p>
             </div>
           </div>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="bg-blue-50 rounded-lg p-4">
               <p className="text-sm text-blue-700">Cash Sales</p>
-              <p className="text-xl font-semibold text-blue-900 mt-2">Rs. {cashSales.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+              <p className="text-xl font-semibold text-blue-900 mt-2">{formatCurrency(cashSales)}</p>
             </div>
             <div className="bg-indigo-50 rounded-lg p-4">
               <p className="text-sm text-indigo-700">Credit & Other Sales</p>
-              <p className="text-xl font-semibold text-indigo-900 mt-2">Rs. {creditSales.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+              <p className="text-xl font-semibold text-indigo-900 mt-2">{formatCurrency(creditSales)}</p>
             </div>
           </div>
         </div>

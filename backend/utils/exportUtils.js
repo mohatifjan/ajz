@@ -150,11 +150,12 @@ export const generateCSVReport = (headers, data, filename) => {
 };
 
 export const formatCurrency = (amount) => {
-  return `$${Number(amount).toFixed(2)}`;
+  return `Rs. ${Number(amount).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 export const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', {
+  if (!date) return 'N/A';
+  return new Date(date).toLocaleDateString('en-GB', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -162,5 +163,5 @@ export const formatDate = (date) => {
 };
 
 export const formatNumber = (num) => {
-  return Number(num).toFixed(2);
+  return Number(num).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };

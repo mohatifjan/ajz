@@ -1,9 +1,10 @@
 import React from 'react';
+import { formatCurrency } from '../utils/formatters';
 
 export default function DashboardMetrics({ data }) {
   const metrics = [
     {
-      label: 'Today\'s Sales',
+      label: "Today's Sales",
       value: data?.todaySales?.totalSales || 0,
       format: 'currency',
       color: 'bg-blue-500'
@@ -34,9 +35,8 @@ export default function DashboardMetrics({ data }) {
         <div key={idx} className={`${metric.color} text-white rounded-lg shadow p-6`}>
           <p className="text-sm font-medium opacity-90">{metric.label}</p>
           <p className="text-3xl font-bold mt-2">
-            {metric.format === 'currency' ? 'Rs. ' : ''}
             {metric.format === 'currency'
-              ? metric.value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              ? formatCurrency(metric.value)
               : metric.value.toLocaleString()}
           </p>
         </div>

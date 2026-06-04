@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI, customerAPI, productAPI } from '../services/api';
+import { formatCurrency } from '../utils/formatters';
 import { Eye, Trash2, Plus, X } from 'lucide-react';
 
 const initialOrderItem = {
@@ -140,7 +141,7 @@ export default function OrdersPage() {
   const handleViewOrder = async (id) => {
     try {
       const response = await orderAPI.getById(id);
-      setSelectedOrder(response.data.data);
+      setSelectedOrder(response.data.data.order);
       setIsViewingOrder(true);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -340,7 +341,7 @@ export default function OrdersPage() {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{order.orderNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{order.customer?.companyName}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">Rs. {parseFloat(order.summary?.totalAmount || 0).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">{formatCurrency(order.summary?.totalAmount || 0)}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
                       order.status === 'cancelled' ? 'bg-red-100 text-red-800' :

@@ -37,3 +37,77 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+/* Print Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+    overflow: visible !important;
+  }
+
+  /* Show only the printable content */
+  .printable-area, 
+  .printable-area * {
+    visibility: visible;
+  }
+
+  /* Position the printable area at the top-left */
+  .printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Enhanced readability for print */
+  .printable-area th {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .printable-area .bg-slate-50,
+  .printable-area .bg-gray-50 {
+    background-color: #f9fafb !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide buttons and interactive elements during print */
+  .no-print,
+  button,
+  .btn,
+  input,
+  select,
+  nav,
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Ensure text is black for clear printing */
+  .printable-area {
+    color: #000 !important;
+  }
+
+  .text-gray-500, .text-gray-600 {
+    color: #374151 !important;
+  }
+
+  /* Table borders for clarity */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #e5e7eb !important;
+  }
+}

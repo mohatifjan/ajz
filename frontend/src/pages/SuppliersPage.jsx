@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supplierAPI } from '../services/api';
+import { formatCurrency } from '../utils/formatters';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 
 const initialForm = {
@@ -296,14 +297,13 @@ export default function SuppliersPage() {
                       {supplier.phone}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      Rs. {supplier.totalOutstanding?.toFixed(2) || '0.00'}
+                      {formatCurrency(supplier.totalOutstanding)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        supplier.status === 'active'
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${supplier.status === 'active'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
-                      }`}>
+                        }`}>
                         {supplier.status}
                       </span>
                     </td>

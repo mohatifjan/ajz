@@ -167,6 +167,10 @@ export const exportAPI = {
   },
   downloadInvoice: (invoiceId, format = 'pdf') => {
     window.location.href = `${apiClient.defaults.baseURL}/exports/invoice?invoiceId=${invoiceId}&format=${format}`;
+  },
+  downloadStatementPDF: (customerId, params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    window.location.href = `${apiClient.defaults.baseURL}/ledger/customer/${customerId}/statement/download?${queryString}`;
   }
 };
 

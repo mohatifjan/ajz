@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ledgerAPI, exportAPI } from '../services/api';
+import { formatCurrency, formatDate as customFormatDate } from '../utils/formatters';
 import { Download, FileText, TrendingDown, AlertCircle, CheckCircle } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -77,86 +78,9 @@ export default function LedgerPage() {
     fetchAgingReport(customer.customerId);
   };
 
-  const downloadStatement = async () => {
-    try {
-      if (!selectedCustomer) return;
-      const res = await ledgerAPI.getCustomerStatement(selectedCustomer.customerId);
-      if (res.data.success) {
-        const statement = res.data.data;
-        let htmlContent = `
-          <html>
-          <head>
-            <title>Customer Statement - ${statement.customer.companyName}</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 20px; }
-              .header { text-align: center; margin-bottom: 30px; }
-              .customer-info { margin-bottom: 20px; }
-              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #366092; color: white; }
-              .total { font-weight: bold; background-color: #f0f0f0; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h1>AJ Traders - Customer Statement</h1>
-              <h2>${statement.customer.companyName}</h2>
-            </div>
-            <div class="customer-info">
-              <p><strong>Email:</strong> ${statement.customer.email}</p>
-              <p><strong>Phone:</strong> ${statement.customer.phone}</p>
-              <p><strong>GST:</strong> ${statement.customer.gstNumber}</p>
-              <p><strong>Credit Limit:</strong> ${statement.customer.creditLimit}</p>
-              <p><strong>Available Credit:</strong> ${statement.customer.availableCredit}</p>
-              <p><strong>Period:</strong> ${statement.periodStart} to ${statement.periodEnd}</p>
-            </div>
-            <table>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Reference</th>
-                <th>Debit</th>
-                <th>Credit</th>
-                <th>Balance</th>
-                <th>Status</th>
-              </tr>
-              ${statement.statement.map(row => `
-                <tr>
-                  <td>${row.date}</td>
-                  <td>${row.description}</td>
-                  <td>${row.reference}</td>
-                  <td>${row.debit}</td>
-                  <td>${row.credit}</td>
-                  <td>${row.balance}</td>
-                  <td>${row.status}</td>
-                </tr>
-              `).join('')}
-              <tr class="total">
-                <td colspan="4"></td>
-                <td colspan="2">Closing Balance: ${statement.closingBalance}</td>
-              </tr>
-            </table>
-            <p style="text-align: center; color: #666; font-size: 12px;">Generated: ${statement.generatedDate}</p>
-          </body>
-          </html>
-        `;
-        const blob = new Blob([htmlContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `statement_${selectedCustomer.companyName}_${new Date().toISOString().split('T')[0]}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-    } catch (err) {
-      alert('Failed to download statement');
-    }
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR' }).format(amount);
+  const downloadStatement = () => {
+    if (!selectedCustomer) return;
+    exportAPI.downloadStatementPDF(selectedCustomer.customerId);
   };
 
   if (isLoading && allCustomersAging.length === 0) {

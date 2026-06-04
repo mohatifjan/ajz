@@ -28,6 +28,9 @@ router.get('/aging/all', authorize('admin', 'manager'), getAllCustomersAgingRepo
 // Get customer statement for export/view
 router.get('/customer/:customerId/statement', getCustomerStatement);
 
+// Download customer statement as PDF
+router.get('/customer/:customerId/statement/download', getCustomerStatementPDF);
+
 // Reconcile ledger entries
 router.patch(
   '/customer/:customerId/reconcile',
