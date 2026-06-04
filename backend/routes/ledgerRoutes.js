@@ -5,6 +5,7 @@ import {
   getAgingReport,
   getAllCustomersAgingReport,
   getCustomerStatement,
+  getCustomerStatementPDF,
   reconcileLedger,
   createLedgerEntry,
   updateLedgerEntry
@@ -61,3 +62,4 @@ router.patch(
 );
 
 export default router;
+
