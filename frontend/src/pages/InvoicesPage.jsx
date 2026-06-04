@@ -109,7 +109,7 @@ export default function InvoicesPage() {
                   invoices.map((invoice) => (
                     <tr key={invoice._id} className="hover:bg-gray-50">
                       <td className="border-b px-4 py-3 font-medium">{invoice.invoiceNumber}</td>
-                      <td className="border-b px-4 py-3">{invoice.customer?.name || 'Unknown'}</td>
+                      <td className="border-b px-4 py-3">{invoice.customer?.companyName || 'N/A'}</td>
                       <td className="border-b px-4 py-3">{formatCurrency(invoice.summary?.totalAmount)}</td>
                       <td className="border-b px-4 py-3 capitalize">
                         <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${invoice.status === 'paid' ? 'bg-green-100 text-green-700' :
@@ -174,7 +174,7 @@ export default function InvoicesPage() {
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Billed To</div>
-                  <div className="font-bold text-gray-900 text-lg">{selectedInvoice.customer?.name}</div>
+                  <div className="font-bold text-gray-900 text-lg">{selectedInvoice.customer?.companyName || 'N/A'}</div>
                   <div className="text-sm text-gray-600 mt-1">{selectedInvoice.customer?.email}</div>
                   <div className="text-sm text-gray-600 font-medium">{selectedInvoice.customer?.phone}</div>
                 </div>

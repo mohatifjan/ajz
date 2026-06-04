@@ -18,7 +18,7 @@ export const getInvoices = async (req, res, next) => {
     }
 
     const invoices = await Invoice.find(filter)
-      .populate('customer', 'name phone email')
+      .populate('customer', 'companyName phone email')
       .populate('order', 'orderNumber')
       .populate('items.product', 'name sku')
       .sort({ invoiceDate: -1 });
@@ -32,7 +32,7 @@ export const getInvoices = async (req, res, next) => {
 export const getInvoiceByNumber = async (req, res, next) => {
   try {
     const invoice = await Invoice.findOne({ invoiceNumber: req.params.invoiceNumber })
-      .populate('customer', 'name phone email address')
+      .populate('customer', 'companyName phone email address')
       .populate('order', 'orderNumber totalAmount')
       .populate('items.product', 'name sku');
 
@@ -49,7 +49,7 @@ export const getInvoiceByNumber = async (req, res, next) => {
 export const getInvoiceById = async (req, res, next) => {
   try {
     const invoice = await Invoice.findById(req.params.id)
-      .populate('customer', 'name phone email address')
+      .populate('customer', 'companyName phone email address')
       .populate('order', 'orderNumber totalAmount')
       .populate('items.product', 'name sku');
 
