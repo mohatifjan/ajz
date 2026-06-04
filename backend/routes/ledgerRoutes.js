@@ -5,6 +5,7 @@ import {
   getAgingReport,
   getAllCustomersAgingReport,
   getCustomerStatement,
+  getCustomerStatementPDF,
   reconcileLedger,
   createLedgerEntry,
   updateLedgerEntry
