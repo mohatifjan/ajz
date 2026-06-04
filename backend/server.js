@@ -30,6 +30,10 @@ import ledgerRoutes from './routes/ledgerRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
 import barcodeRoutes from './routes/barcodeRoutes.js';
 import backupRoutes from './routes/backupRoutes.js';
+import configRoutes from './routes/configRoutes.js';
+
+// Import cron jobs
+import { initCronJobs } from './utils/cronJobs.js';
 
 // Import error handling middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -97,6 +101,7 @@ app.use('/api/ledger', ledgerRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/barcode', barcodeRoutes);
 app.use('/api/backup', backupRoutes);
+app.use('/api/config', configRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -147,6 +152,9 @@ const startServer = async () => {
 
     await connectDB();
     app.listen(PORT, () => {
+      // Initialize Cron Jobs
+      initCronJobs();
+
       console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
       console.log(`📝 API Documentation: http://localhost:${PORT}/api`);
     });

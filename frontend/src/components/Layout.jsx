@@ -15,7 +15,8 @@ import {
   X,
   Truck,
   Receipt,
-  BarChart3
+  BarChart3,
+  Settings
 } from 'lucide-react';
 
 export default function Layout({ children }) {
@@ -36,7 +37,8 @@ export default function Layout({ children }) {
     { label: 'Suppliers', path: '/suppliers', icon: Truck, roles: ['admin', 'manager'], permission: 'suppliers' },
     { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt, roles: ['admin', 'manager'], permission: 'suppliers' },
     { label: 'Reports', path: '/reports', icon: BarChart3, roles: ['admin', 'manager'], permission: 'reports' },
-    { label: 'Users', path: '/users', icon: Users, roles: ['admin'], permission: 'users' }
+    { label: 'Users', path: '/users', icon: Users, roles: ['admin'], permission: 'users' },
+    { label: 'Settings', path: '/settings', icon: Settings, roles: ['admin'], permission: 'settings' }
   ];
 
   const filteredMenuItems = menuItems.filter(item =>

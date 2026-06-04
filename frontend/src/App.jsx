@@ -13,6 +13,7 @@ import SuppliersPage from './pages/SuppliersPage';
 import PurchaseOrdersPage from './pages/PurchaseOrdersPage';
 import ReportsPage from './pages/ReportsPage';
 import UserManagementPage from './pages/UserManagementPage';
+import SettingsPage from './pages/SettingsPage';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children }) => {
@@ -65,6 +66,7 @@ export default function App() {
                   <Route path="/purchase-orders" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><PurchaseOrdersPage /></RoleProtectedRoute>} />
                   <Route path="/reports" element={<RoleProtectedRoute allowedRoles={['admin', 'manager']}><ReportsPage /></RoleProtectedRoute>} />
                   <Route path="/users" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagementPage /></RoleProtectedRoute>} />
+                  <Route path="/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><SettingsPage /></RoleProtectedRoute>} />
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
               </Layout>

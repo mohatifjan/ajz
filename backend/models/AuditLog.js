@@ -5,12 +5,12 @@ const auditLogSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
       index: true
     },
     userId: {
       type: String,
-      required: true,
+      required: false,
       index: true
     },
     userEmail: String,
@@ -32,7 +32,8 @@ const auditLogSchema = new mongoose.Schema(
         'PAYMENT_RECORDED',
         'ORDER_STATUS_CHANGE',
         'INVENTORY_ADJUSTMENT',
-        'USER_MANAGEMENT'
+        'USER_MANAGEMENT',
+        'SYSTEM_MANAGEMENT'
       ],
       index: true
     },
@@ -51,7 +52,8 @@ const auditLogSchema = new mongoose.Schema(
         'Branch',
         'Category',
         'CustomerLedger',
-        'Auth'
+        'Auth',
+        'System'
       ],
       required: true,
       index: true

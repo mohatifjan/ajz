@@ -179,4 +179,10 @@ export const barcodeAPI = {
   getStatistics: () => apiClient.get('/barcode/statistics')
 };
 
+export const configAPI = {
+  getAll: () => apiClient.get('/config'),
+  getByKey: (key) => apiClient.get(`/config/${key}`),
+  update: (key, data) => apiClient.put(`/config/${key}`, data)
+};
+
 export default apiClient;
