@@ -94,7 +94,7 @@ const purchaseOrderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['draft', 'ordered', 'received', 'cancelled'],
+      enum: ['draft', 'ordered', 'partial', 'received', 'paid', 'cancelled'],
       default: 'draft'
     },
     deliveryStatus: {

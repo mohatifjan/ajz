@@ -181,7 +181,7 @@ export const updatePurchaseOrderStatus = async (req, res, next) => {
   try {
     const { status, deliveryStatus } = req.body;
 
-    const allowedStatuses = ['draft', 'ordered', 'received', 'cancelled'];
+    const allowedStatuses = ['draft', 'ordered', 'partial', 'received', 'paid', 'cancelled'];
 
     if (status && !allowedStatuses.includes(status)) {
       return res.status(400).json({
@@ -283,6 +283,8 @@ export const recordPurchasePayment = async (req, res, next) => {
 
     if (purchaseOrder.amountDue === 0) {
       purchaseOrder.status = 'paid';
+    } else if (purchaseOrder.amountDue > 0) {
+      purchaseOrder.status = 'partial';
     }
 
     await purchaseOrder.save();
