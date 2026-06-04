@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI, customerAPI, productAPI } from '../services/api';
 import { formatCurrency } from '../utils/formatters';
-import { Eye, Trash2, Plus, X } from 'lucide-react';
+import { Eye, Trash2, Plus, X, DollarSign } from 'lucide-react';
 
 const initialOrderItem = {
   product: '',
@@ -29,6 +29,13 @@ export default function OrdersPage() {
   const [formData, setFormData] = useState(initialOrderForm);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isViewingOrder, setIsViewingOrder] = useState(false);
+  const [isRecordingPayment, setIsRecordingPayment] = useState(false);
+  const [paymentData, setPaymentData] = useState({
+    amount: 0,
+    paymentMethod: 'cash',
+    referenceNumber: '',
+    notes: ''
+  });
 
   useEffect(() => {
     fetchOrders();
@@ -143,6 +150,18 @@ export default function OrdersPage() {
       const response = await orderAPI.getById(id);
       setSelectedOrder(response.data.data.order);
       setIsViewingOrder(true);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleRecordPayment = async (e) => {
+    e.preventDefault();
+    try {
+      await orderAPI.recordPayment(selectedOrder._id, paymentData);
+      setIsRecordingPayment(false);
+      setPaymentData({ amount: 0, paymentMethod: 'cash', referenceNumber: '', notes: '' });
+      fetchOrders();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -362,12 +381,27 @@ export default function OrdersPage() {
                     <button
                       onClick={() => handleViewOrder(order._id)}
                       className="text-blue-600 hover:text-blue-900 mr-3"
+                      title="View Details"
                     >
                       <Eye size={18} />
                     </button>
+                    {(order.paymentStatus === 'pending' || order.paymentStatus === 'partial') && (
+                      <button
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setPaymentData({ ...paymentData, amount: order.amountDue });
+                          setIsRecordingPayment(true);
+                        }}
+                        className="text-green-600 hover:text-green-900 mr-3"
+                        title="Record Payment"
+                      >
+                        <DollarSign size={18} />
+                      </button>
+                    )}
                     <button
                       onClick={() => handleDelete(order._id)}
                       className="text-red-600 hover:text-red-900"
+                      title="Delete Order"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -467,6 +501,95 @@ export default function OrdersPage() {
                 Close Detail
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Record Payment Modal */}
+      {isRecordingPayment && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="p-6 border-b flex justify-between items-center bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-900">Record Payment</h2>
+              <button
+                onClick={() => setIsRecordingPayment(false)}
+                className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <form onSubmit={handleRecordPayment} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Order Number</label>
+                <div className="px-4 py-2 bg-gray-100 rounded-lg text-gray-600 font-medium">
+                  {selectedOrder.orderNumber}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Total Amount</label>
+                  <div className="text-gray-900 font-bold">{formatCurrency(selectedOrder.summary?.totalAmount)}</div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 text-red-600">Remaining Due</label>
+                  <div className="text-red-600 font-black">{formatCurrency(selectedOrder.amountDue)}</div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Payment Amount</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Rs.</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max={selectedOrder.amountDue}
+                    value={paymentData.amount}
+                    onChange={(e) => setPaymentData({ ...paymentData, amount: parseFloat(e.target.value) || 0 })}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-bold"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Payment Method</label>
+                <select
+                  value={paymentData.paymentMethod}
+                  onChange={(e) => setPaymentData({ ...paymentData, paymentMethod: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="cash">Cash</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="upi">UPI</option>
+                  <option value="cheque">Cheque</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 text-[10px] uppercase tracking-widest">Reference / Notes</label>
+                <textarea
+                  value={paymentData.notes}
+                  onChange={(e) => setPaymentData({ ...paymentData, notes: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  rows={2}
+                  placeholder="Txn ID, Cheque #, etc."
+                />
+              </div>
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsRecordingPayment(false)}
+                  className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg active:scale-95 transition-all"
+                >
+                  Confirm Payment
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

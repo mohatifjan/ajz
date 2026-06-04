@@ -3,6 +3,7 @@ import Payment from '../models/Payment.js';
 import Product from '../models/Product.js';
 import Customer from '../models/Customer.js';
 import Invoice from '../models/Invoice.js';
+import CustomerLedger from '../models/CustomerLedger.js';
 import { validationResult } from 'express-validator';
 import { generateInvoiceNumber } from '../utils/helpers.js';
 
@@ -337,6 +338,24 @@ export const recordPayment = async (req, res, next) => {
         await customer.save();
       }
     }
+
+    // Ledger audit trail: create a 'payment' credit entry
+    await CustomerLedger.create({
+      customer: order.customer,
+      transactionType: 'payment',
+      transactionNumber: paymentNumber,
+      reference: {
+        order: order._id,
+        payment: payment._id
+      },
+      credit: amount,
+      debit: 0,
+      dueDate: new Date(),
+      paymentDate: new Date(),
+      description: `Payment received for order ${order.orderNumber}`,
+      status: 'paid',
+      createdBy: req.user.id
+    });
 
     res.status(201).json({
       status: 'success',

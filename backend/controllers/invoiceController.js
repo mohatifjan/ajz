@@ -20,6 +20,7 @@ export const getInvoices = async (req, res, next) => {
     const invoices = await Invoice.find(filter)
       .populate('customer', 'name phone email')
       .populate('order', 'orderNumber')
+      .populate('items.product', 'name sku')
       .sort({ invoiceDate: -1 });
 
     res.status(200).json({ status: 'success', data: invoices });
@@ -32,7 +33,8 @@ export const getInvoiceByNumber = async (req, res, next) => {
   try {
     const invoice = await Invoice.findOne({ invoiceNumber: req.params.invoiceNumber })
       .populate('customer', 'name phone email address')
-      .populate('order', 'orderNumber totalAmount');
+      .populate('order', 'orderNumber totalAmount')
+      .populate('items.product', 'name sku');
 
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });
@@ -48,7 +50,8 @@ export const getInvoiceById = async (req, res, next) => {
   try {
     const invoice = await Invoice.findById(req.params.id)
       .populate('customer', 'name phone email address')
-      .populate('order', 'orderNumber totalAmount');
+      .populate('order', 'orderNumber totalAmount')
+      .populate('items.product', 'name sku');
 
     if (!invoice) {
       return res.status(404).json({ success: false, message: 'Invoice not found' });

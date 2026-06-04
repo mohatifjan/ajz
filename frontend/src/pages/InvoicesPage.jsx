@@ -204,8 +204,10 @@ export default function InvoicesPage() {
                     {selectedInvoice.items.map((item, idx) => (
                       <tr key={idx}>
                         <td className="px-4 py-4">
-                          <div className="font-bold text-gray-900">{item.variation?.size || item.description || 'General Item'}</div>
-                          {item.unit && <div className="text-[10px] text-gray-500 uppercase mt-0.5">Unit: {item.unit}</div>}
+                          <div className="font-bold text-gray-900">{item.product?.name || item.description || 'General Item'}</div>
+                          <div className="text-[10px] text-gray-500 uppercase mt-0.5">
+                            {item.product?.sku && `SKU: ${item.product.sku}`} {item.unit && `| Unit: ${item.unit}`}
+                          </div>
                         </td>
                         <td className="px-4 py-4 text-right font-medium text-gray-700">{item.quantity}</td>
                         <td className="px-4 py-4 text-right font-medium text-gray-700">{formatCurrency(item.unitPrice)}</td>
