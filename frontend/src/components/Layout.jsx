@@ -56,7 +56,7 @@ export default function Layout({ children }) {
       {/* Sidebar - Main Parent with fixed height and theme */}
       <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} h-full bg-gray-900 text-white transition-all duration-300 flex flex-col z-20`}>
         {/* Top Section: Logo + Header */}
-        <div className="flex-shrink-0 p-4 border-b border-gray-800">
+        <div className="flex-shrink-0 p-4">
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <div>
@@ -94,7 +94,7 @@ export default function Layout({ children }) {
         </nav>
 
         {/* Bottom Section: Settings + Logout (Grouped Footer) */}
-        <div className="flex-shrink-0 p-4 border-t border-gray-800 bg-gray-900">
+        <div className="flex-shrink-0 p-4 mt-auto">
           <div className="space-y-1">
             {/* Settings Link */}
             {(user?.role === 'admin' || (user?.permissions && user.permissions.includes('settings'))) && (
