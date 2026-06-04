@@ -99,7 +99,7 @@ export default function LedgerPage() {
           </head>
           <body>
             <div class="header">
-              <h1>AJZ - Customer Statement</h1>
+              <h1>AJ Traders - Customer Statement</h1>
               <h2>${statement.customer.companyName}</h2>
             </div>
             <div class="customer-info">
@@ -231,31 +231,28 @@ export default function LedgerPage() {
         <div className="flex gap-4">
           <button
             onClick={() => setActiveTab('ledger')}
-            className={`px-4 py-2 font-medium border-b-2 ${
-              activeTab === 'ledger'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
+            className={`px-4 py-2 font-medium border-b-2 ${activeTab === 'ledger'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
           >
             Customer Ledger
           </button>
           <button
             onClick={() => setActiveTab('aging')}
-            className={`px-4 py-2 font-medium border-b-2 ${
-              activeTab === 'aging'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
+            className={`px-4 py-2 font-medium border-b-2 ${activeTab === 'aging'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
           >
             Aging Analysis
           </button>
           <button
             onClick={() => setActiveTab('summary')}
-            className={`px-4 py-2 font-medium border-b-2 ${
-              activeTab === 'summary'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
+            className={`px-4 py-2 font-medium border-b-2 ${activeTab === 'summary'
+              ? 'border-blue-600 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
           >
             All Customers
           </button>
@@ -331,12 +328,11 @@ export default function LedgerPage() {
                       {formatCurrency(entry.runningBalance)}
                     </td>
                     <td className="px-4 py-2 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        entry.status === 'paid' ? 'bg-green-100 text-green-800' :
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${entry.status === 'paid' ? 'bg-green-100 text-green-800' :
                         entry.status === 'overdue' ? 'bg-red-100 text-red-800' :
-                        entry.status === 'partial' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                          entry.status === 'partial' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                        }`}>
                         {entry.status}
                       </span>
                     </td>

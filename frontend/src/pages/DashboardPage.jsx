@@ -71,7 +71,7 @@ export default function DashboardPage() {
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Executive Dashboard</h1>
-        <p className="text-gray-600 mt-2">Real-time insights and analytics for AJZ</p>
+        <p className="text-gray-600 mt-2">Real-time insights and analytics for AJ Traders</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 mb-8">
