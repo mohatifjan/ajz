@@ -37,8 +37,7 @@ export default function Layout({ children }) {
     { label: 'Suppliers', path: '/suppliers', icon: Truck, roles: ['admin', 'manager'], permission: 'suppliers' },
     { label: 'Purchase Orders', path: '/purchase-orders', icon: Receipt, roles: ['admin', 'manager'], permission: 'suppliers' },
     { label: 'Reports', path: '/reports', icon: BarChart3, roles: ['admin', 'manager'], permission: 'reports' },
-    { label: 'Users', path: '/users', icon: Users, roles: ['admin'], permission: 'users' },
-    { label: 'Settings', path: '/settings', icon: Settings, roles: ['admin'], permission: 'settings' }
+    { label: 'Users', path: '/users', icon: Users, roles: ['admin'], permission: 'users' }
   ];
 
   const filteredMenuItems = menuItems.filter(item =>
@@ -53,11 +52,11 @@ export default function Layout({ children }) {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-900 text-white transition-all duration-300 flex flex-col`}>
-        {/* Logo */}
-        <div className="p-4 border-b border-gray-800">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* Sidebar - Main Parent with fixed height and theme */}
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} h-full bg-gray-900 text-white transition-all duration-300 flex flex-col z-20`}>
+        {/* Top Section: Logo + Header */}
+        <div className="flex-shrink-0 p-4 border-b border-gray-800">
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <div>
@@ -67,15 +66,15 @@ export default function Layout({ children }) {
             )}
             <button
               onClick={toggleSidebar}
-              className="p-1 hover:bg-gray-800 rounded"
+              className="p-1 hover:bg-gray-800 rounded transition-colors"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-2">
+        {/* Scrollable Middle Section: Dynamic Menu Items */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
           {filteredMenuItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -83,28 +82,45 @@ export default function Layout({ children }) {
                 key={item.path}
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive(item.path)
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-md'
                   : 'text-gray-300 hover:bg-gray-800'
                   }`}
               >
                 <Icon size={20} />
-                {sidebarOpen && <span>{item.label}</span>}
+                {sidebarOpen && <span className="font-medium">{item.label}</span>}
               </Link>
             );
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="p-4 border-t border-gray-800">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <LogOut size={20} />
-            {sidebarOpen && <span>Logout</span>}
-          </button>
+        {/* Bottom Section: Settings + Logout (Grouped Footer) */}
+        <div className="flex-shrink-0 p-4 border-t border-gray-800 bg-gray-900">
+          <div className="space-y-1">
+            {/* Settings Link */}
+            {(user?.role === 'admin' || (user?.permissions && user.permissions.includes('settings'))) && (
+              <Link
+                to="/settings"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive('/settings')
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-gray-300 hover:bg-gray-800'
+                  }`}
+              >
+                <Settings size={20} />
+                {sidebarOpen && <span className="font-medium">Settings</span>}
+              </Link>
+            )}
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 w-full text-gray-300 hover:bg-gray-800 rounded-lg transition-colors"
+            >
+              <LogOut size={20} />
+              {sidebarOpen && <span className="font-medium">Logout</span>}
+            </button>
+          </div>
         </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
