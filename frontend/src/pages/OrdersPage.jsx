@@ -26,6 +26,8 @@ export default function OrdersPage() {
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState(initialOrderForm);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isViewingOrder, setIsViewingOrder] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -130,6 +132,16 @@ export default function OrdersPage() {
 
       setOrders([response.data.data, ...orders]);
       resetForm();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleViewOrder = async (id) => {
+    try {
+      const response = await orderAPI.getById(id);
+      setSelectedOrder(response.data.data);
+      setIsViewingOrder(true);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -331,22 +343,25 @@ export default function OrdersPage() {
                   <td className="px-6 py-4 text-sm font-semibold text-gray-900">Rs. {parseFloat(order.summary?.totalAmount || 0).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                          'bg-blue-100 text-blue-800'
+                      order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                        'bg-blue-100 text-blue-800'
                       }`}>
                       {order.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                        order.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                      order.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
                       }`}>
                       {order.paymentStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
+                    <button
+                      onClick={() => handleViewOrder(order._id)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
                       <Eye size={18} />
                     </button>
                     <button
@@ -360,6 +375,98 @@ export default function OrdersPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Order Details Modal */}
+      {isViewingOrder && selectedOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="p-6 border-b flex justify-between items-center bg-gray-50">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  Order Detail: #{selectedOrder.orderNumber}
+                </h2>
+                <p className="text-sm text-gray-500 font-medium">Placed on {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+              </div>
+              <button
+                onClick={() => setIsViewingOrder(false)}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X size={24} className="text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-8">
+              <div className="grid gap-8 md:grid-cols-2 mb-8">
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                  <h3 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Customer Information</h3>
+                  <div className="space-y-1">
+                    <p className="text-lg font-bold text-gray-900">{selectedOrder.customer?.companyName || 'N/A'}</p>
+                    <p className="text-sm text-gray-600">{selectedOrder.customer?.email}</p>
+                    <p className="text-sm text-gray-600">{selectedOrder.customer?.phone}</p>
+                  </div>
+                </div>
+                <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                  <h3 className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">Order Summary</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium whitespace-nowrap">Status</p>
+                      <span className="inline-block px-2 py-0.5 mt-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">{selectedOrder.status}</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium whitespace-nowrap">Payment Status</p>
+                      <span className="inline-block px-2 py-0.5 mt-1 bg-blue-100 text-blue-700 rounded text-[10px] font-bold uppercase">{selectedOrder.paymentStatus}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-6 py-3 text-left font-bold text-gray-700">Product</th>
+                      <th className="px-6 py-3 text-center font-bold text-gray-700">Qty</th>
+                      <th className="px-6 py-3 text-right font-bold text-gray-700">Price</th>
+                      <th className="px-6 py-3 text-right font-bold text-gray-700">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {selectedOrder.items && selectedOrder.items.map((item, idx) => (
+                      <tr key={idx} className="hover:bg-gray-50/50">
+                        <td className="px-6 py-4">
+                          <p className="font-semibold text-gray-900">{item.product?.name || 'Deleted Product'}</p>
+                          <p className="text-xs text-gray-500 font-medium">{item.product?.sku}</p>
+                        </td>
+                        <td className="px-6 py-4 text-center font-medium text-gray-700">x{item.quantity}</td>
+                        <td className="px-6 py-4 text-right font-medium text-gray-700">Rs. {item.unitPrice?.toFixed(2)}</td>
+                        <td className="px-6 py-4 text-right font-bold text-gray-900">Rs. {(item.quantity * item.unitPrice).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="bg-gray-50/80 border-t">
+                    <tr>
+                      <td colSpan="3" className="px-6 py-4 text-right font-bold text-gray-600 uppercase tracking-wider text-xs">Grand Total</td>
+                      <td className="px-6 py-4 text-right font-black text-xl text-blue-600">Rs. {selectedOrder.summary?.totalAmount?.toFixed(2)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t bg-gray-50/50 flex justify-end">
+              <button
+                onClick={() => setIsViewingOrder(false)}
+                className="px-6 py-2.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all shadow-md active:scale-95"
+              >
+                Close Detail
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
