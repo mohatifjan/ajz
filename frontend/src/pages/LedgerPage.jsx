@@ -78,9 +78,14 @@ export default function LedgerPage() {
     fetchAgingReport(customer.customerId);
   };
 
-  const downloadStatement = () => {
+  const downloadStatement = async () => {
     if (!selectedCustomer) return;
-    exportAPI.downloadStatementPDF(selectedCustomer.customerId);
+    try {
+      setError(null);
+      await exportAPI.downloadStatementPDF(selectedCustomer.customerId);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to download statement');
+    }
   };
 
   if (isLoading && allCustomersAging.length === 0) {

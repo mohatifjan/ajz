@@ -148,30 +148,43 @@ export const branchAPI = {
   delete: (id) => apiClient.delete(`/branches/${id}`)
 };
 
-export const exportAPI = {
-  downloadSalesReport: (params) => {
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `${apiClient.defaults.baseURL}/exports/sales-report?${queryString}`;
-  },
-  downloadProfitLossReport: (params) => {
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `${apiClient.defaults.baseURL}/exports/profit-loss-report?${queryString}`;
-  },
-  downloadCustomerOutstandingReport: (params) => {
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `${apiClient.defaults.baseURL}/exports/customer-outstanding-report?${queryString}`;
-  },
-  downloadInventoryValuationReport: (params) => {
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `${apiClient.defaults.baseURL}/exports/inventory-valuation-report?${queryString}`;
-  },
-  downloadInvoice: (invoiceId, format = 'pdf') => {
-    window.location.href = `${apiClient.defaults.baseURL}/exports/invoice?invoiceId=${invoiceId}&format=${format}`;
-  },
-  downloadStatementPDF: (customerId, params = {}) => {
-    const queryString = new URLSearchParams(params).toString();
-    window.location.href = `${apiClient.defaults.baseURL}/ledger/customer/${customerId}/statement/download?${queryString}`;
+const downloadFile = async (url, params = {}, defaultFilename = 'download') => {
+  try {
+    const response = await apiClient.get(url, {
+      params,
+      responseType: 'blob'
+    });
+
+    const disposition = response.headers['content-disposition'];
+    let filename = defaultFilename;
+    if (disposition && disposition.indexOf('attachment') !== -1) {
+      const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+      const matches = filenameRegex.exec(disposition);
+      if (matches != null && matches[1]) {
+        filename = matches[1].replace(/['"]/g, '');
+      }
+    }
+
+    const blob = new Blob([response.data], { type: response.data.type || 'application/octet-stream' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error('File download failed:', error);
+    throw error;
   }
+};
+
+export const exportAPI = {
+  downloadSalesReport: (params) => downloadFile('/exports/sales-report', params, 'sales_report.xlsx'),
+  downloadProfitLossReport: (params) => downloadFile('/exports/profit-loss-report', params, 'profit_loss_report.xlsx'),
+  downloadCustomerOutstandingReport: (params) => downloadFile('/exports/customer-outstanding-report', params, 'customer_outstanding_report.xlsx'),
+  downloadInventoryValuationReport: (params) => downloadFile('/exports/inventory-valuation-report', params, 'inventory_valuation_report.xlsx'),
+  downloadInvoice: (invoiceId, format = 'pdf') => downloadFile('/exports/invoice', { invoiceId, format }, `Invoice_${invoiceId}.${format}`),
+  downloadStatementPDF: (customerId, params = {}) => downloadFile(`/ledger/customer/${customerId}/statement/download`, params, `Statement_${customerId}.pdf`)
 };
 
 export const barcodeAPI = {
