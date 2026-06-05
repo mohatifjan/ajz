@@ -18,9 +18,18 @@ const customerLedgerSchema = new mongoose.Schema(
       required: true
     },
     reference: {
-      order: mongoose.Schema.Types.ObjectId,
-      invoice: mongoose.Schema.Types.ObjectId,
-      payment: mongoose.Schema.Types.ObjectId
+      order: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order'
+      },
+      invoice: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Invoice'
+      },
+      payment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Payment'
+      }
     },
     debit: {
       type: Number,

@@ -1,14 +1,21 @@
 import PDFDocument from 'pdfkit';
+import mongoose from 'mongoose';
 import CustomerLedger, { calculateAgingBucket } from '../models/CustomerLedger.js';
 import Customer from '../models/Customer.js';
 import Order from '../models/Order.js';
 import Payment from '../models/Payment.js';
+import Invoice from '../models/Invoice.js';
+import User from '../models/User.js';
 import { formatCurrency, formatDate, formatNumber } from '../utils/exportUtils.js';
 
 export const getCustomerLedger = async (req, res, next) => {
   try {
     const { customerId } = req.params;
     const { page = 1, limit = 20, status, startDate, endDate, sort = '-createdAt' } = req.query;
+
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
 
     const customer = await Customer.findById(customerId);
     if (!customer) {
@@ -34,7 +41,7 @@ export const getCustomerLedger = async (req, res, next) => {
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit))
-        .populate('createdBy', 'email name')
+        .populate({ path: 'createdBy', model: 'User', select: 'email name' })
         .lean(),
       CustomerLedger.countDocuments(query)
     ]);
@@ -75,6 +82,10 @@ export const getCustomerLedger = async (req, res, next) => {
 export const getAgingReport = async (req, res, next) => {
   try {
     const { customerId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
 
     const customer = await Customer.findById(customerId);
     if (!customer) {
@@ -191,6 +202,10 @@ export const getCustomerStatement = async (req, res, next) => {
     const { customerId } = req.params;
     const { startDate, endDate } = req.query;
 
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
+
     const customer = await Customer.findById(customerId);
     if (!customer) {
       return res.status(404).json({ success: false, message: 'Customer not found' });
@@ -206,23 +221,23 @@ export const getCustomerStatement = async (req, res, next) => {
 
     const ledgerEntries = await CustomerLedger.find(query)
       .sort({ createdAt: 1 })
-      .populate('reference.order', 'orderNumber')
-      .populate('reference.invoice', 'invoiceNumber')
+      .populate({ path: 'reference.order', model: 'Order', select: 'orderNumber' })
+      .populate({ path: 'reference.invoice', model: 'Invoice', select: 'invoiceNumber' })
       .lean();
 
     let openingBalance = 0;
     let runningBalance = 0;
 
     const statement = ledgerEntries.map(entry => {
-      runningBalance = entry.runningBalance;
+      runningBalance = entry.runningBalance || 0;
       return {
         date: formatDate(entry.createdAt),
-        description: entry.description,
-        reference: entry.transactionNumber,
-        debit: formatCurrency(entry.debit),
-        credit: formatCurrency(entry.credit),
-        balance: formatCurrency(entry.runningBalance),
-        status: entry.status,
+        description: entry.description || 'N/A',
+        reference: entry.transactionNumber || 'N/A',
+        debit: formatCurrency(entry.debit || 0),
+        credit: formatCurrency(entry.credit || 0),
+        balance: formatCurrency(entry.runningBalance || 0),
+        status: entry.status || 'pending',
         dueDate: formatDate(entry.dueDate)
       };
     });
@@ -258,6 +273,10 @@ export const reconcileLedger = async (req, res, next) => {
     const { customerId } = req.params;
     const { ledgerIds } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
+
     if (!ledgerIds || !Array.isArray(ledgerIds)) {
       return res.status(400).json({ success: false, message: 'ledgerIds array is required' });
     }
@@ -287,6 +306,10 @@ export const createLedgerEntry = async (req, res, next) => {
   try {
     const { customerId } = req.params;
     const { transactionType, transactionNumber, debit, credit, dueDate, description, reference } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
 
     const customer = await Customer.findById(customerId);
     if (!customer) {
@@ -322,6 +345,13 @@ export const updateLedgerEntry = async (req, res, next) => {
     const { customerId, ledgerId } = req.params;
     const { status, paymentDate, notes } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
+    if (!mongoose.Types.ObjectId.isValid(ledgerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid ledger ID format' });
+    }
+
     const ledgerEntry = await CustomerLedger.findOneAndUpdate(
       { _id: ledgerId, customer: customerId },
       {
@@ -352,6 +382,10 @@ export const getCustomerStatementPDF = async (req, res, next) => {
     const { customerId } = req.params;
     const { startDate, endDate } = req.query;
 
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ success: false, message: 'Invalid customer ID format' });
+    }
+
     const customer = await Customer.findById(customerId);
     if (!customer) {
       return res.status(404).json({ success: false, message: 'Customer not found' });
@@ -366,8 +400,8 @@ export const getCustomerStatementPDF = async (req, res, next) => {
 
     const ledgerEntries = await CustomerLedger.find(query)
       .sort({ createdAt: 1 })
-      .populate('reference.order', 'orderNumber')
-      .populate('reference.invoice', 'invoiceNumber')
+      .populate({ path: 'reference.order', model: 'Order', select: 'orderNumber' })
+      .populate({ path: 'reference.invoice', model: 'Invoice', select: 'invoiceNumber' })
       .lean();
 
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
