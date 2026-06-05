@@ -1,5 +1,5 @@
 import PDFDocument from 'pdfkit';
-import CustomerLedger from '../models/CustomerLedger.js';
+import CustomerLedger, { calculateAgingBucket } from '../models/CustomerLedger.js';
 import Customer from '../models/Customer.js';
 import Order from '../models/Order.js';
 import Payment from '../models/Payment.js';
@@ -41,9 +41,7 @@ export const getCustomerLedger = async (req, res, next) => {
 
     // Update aging buckets
     ledgerEntries.forEach(entry => {
-      const ledgerObj = Object.assign(Object.create(CustomerLedger.prototype), entry);
-      ledgerObj.updateAgingBucket();
-      entry.agingBucket = ledgerObj.agingBucket;
+      entry.agingBucket = calculateAgingBucket(entry.status, entry.dueDate);
     });
 
     const totalPages = Math.ceil(total / limit);
@@ -98,9 +96,7 @@ export const getAgingReport = async (req, res, next) => {
     };
 
     ledgerEntries.forEach(entry => {
-      const ledgerObj = Object.assign(Object.create(CustomerLedger.prototype), entry);
-      ledgerObj.updateAgingBucket();
-      const bucket = ledgerObj.agingBucket;
+      const bucket = calculateAgingBucket(entry.status, entry.dueDate);
 
       const balance = entry.debit - entry.credit;
       if (balance > 0) {
@@ -161,9 +157,7 @@ export const getAllCustomersAgingReport = async (req, res, next) => {
         };
 
         ledgerEntries.forEach(entry => {
-          const ledgerObj = Object.assign(Object.create(CustomerLedger.prototype), entry);
-          ledgerObj.updateAgingBucket();
-          const bucket = ledgerObj.agingBucket;
+          const bucket = calculateAgingBucket(entry.status, entry.dueDate);
           const balance = entry.debit - entry.credit;
           if (balance > 0) {
             agingBuckets[bucket] += balance;

@@ -94,26 +94,29 @@ customerLedgerSchema.pre('save', async function(next) {
 });
 
 // Calculate aging bucket based on current date
-customerLedgerSchema.methods.updateAgingBucket = function() {
-  if (this.status === 'paid') {
-    this.agingBucket = 'current';
-    return;
+export const calculateAgingBucket = (status, dueDate) => {
+  if (status === 'paid') {
+    return 'current';
   }
 
   const now = new Date();
-  const daysOverdue = Math.floor((now - this.dueDate) / (1000 * 60 * 60 * 24));
+  const daysOverdue = Math.floor((now - new Date(dueDate)) / (1000 * 60 * 60 * 24));
 
   if (daysOverdue <= 0) {
-    this.agingBucket = 'current';
+    return 'current';
   } else if (daysOverdue <= 30) {
-    this.agingBucket = '30_days';
+    return '30_days';
   } else if (daysOverdue <= 60) {
-    this.agingBucket = '60_days';
+    return '60_days';
   } else if (daysOverdue <= 90) {
-    this.agingBucket = '90_days';
+    return '90_days';
   } else {
-    this.agingBucket = 'over_90';
+    return 'over_90';
   }
+};
+
+customerLedgerSchema.methods.updateAgingBucket = function() {
+  this.agingBucket = calculateAgingBucket(this.status, this.dueDate);
 };
 
 export default mongoose.model('CustomerLedger', customerLedgerSchema);
