@@ -80,7 +80,11 @@ export const getAuditLogs = async (req, res, next) => {
     if (startDate || endDate) {
       query.timestamp = {};
       if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
+        query.timestamp.$lte = end;
+      }
     }
 
     if (search) {
@@ -126,7 +130,11 @@ export const getAuditLogsByUser = async (req, res, next) => {
     if (startDate || endDate) {
       query.timestamp = {};
       if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
+        query.timestamp.$lte = end;
+      }
     }
 
     const skip = (page - 1) * limit;

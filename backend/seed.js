@@ -358,6 +358,7 @@ const seedDatabase = async () => {
           tax: 10260,
           totalAmount: 67260
         },
+        amountDue: 33630,
         status: 'ordered',
         branch: branches[0]._id,
         createdBy: users[1]._id
@@ -379,6 +380,7 @@ const seedDatabase = async () => {
           tax: 2160,
           totalAmount: 14160
         },
+        amountDue: 14160,
         status: 'received',
         branch: branches[1]._id,
         createdBy: users[1]._id

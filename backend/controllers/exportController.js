@@ -29,9 +29,11 @@ export const exportSalesReport = async (req, res, next) => {
     }
 
     if (startDate && endDate) {
+      const end = new Date(endDate);
+      end.setUTCHours(23, 59, 59, 999);
       dateRange = {
         $gte: new Date(startDate),
-        $lte: new Date(endDate)
+        $lte: end
       };
     }
 
@@ -114,9 +116,11 @@ export const exportProfitLossReport = async (req, res, next) => {
     }
 
     if (startDate && endDate) {
+      const end = new Date(endDate);
+      end.setUTCHours(23, 59, 59, 999);
       dateRange = {
         $gte: new Date(startDate),
-        $lte: new Date(endDate)
+        $lte: end
       };
     }
 

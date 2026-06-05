@@ -244,7 +244,7 @@ export const updatePurchaseOrderStatus = async (req, res, next) => {
 
 export const recordPurchasePayment = async (req, res, next) => {
   try {
-    const { amount, paymentMethod, referenceNumber } = req.body;
+    const { amount, paymentMethod, referenceNumber, notes } = req.body;
     const purchaseOrderId = req.params.id;
 
     const purchaseOrder = await PurchaseOrder.findById(purchaseOrderId);
@@ -256,7 +256,15 @@ export const recordPurchasePayment = async (req, res, next) => {
       });
     }
 
-    if (amount > purchaseOrder.amountDue) {
+    const paymentAmount = Number(amount);
+    if (!amount || isNaN(paymentAmount) || paymentAmount <= 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid payment amount'
+      });
+    }
+
+    if (paymentAmount > purchaseOrder.amountDue) {
       return res.status(400).json({
         status: 'error',
         message: `Amount exceeds due amount (${purchaseOrder.amountDue})`
@@ -269,9 +277,10 @@ export const recordPurchasePayment = async (req, res, next) => {
       paymentNumber,
       purchaseOrder: purchaseOrderId,
       supplier: purchaseOrder.supplier,
-      amount,
+      amount: paymentAmount,
       paymentMethod,
       referenceNumber,
+      notes,
       status: 'confirmed',
       recordedBy: req.user.id
     });
@@ -279,7 +288,7 @@ export const recordPurchasePayment = async (req, res, next) => {
     await payment.save();
 
     // Update purchase order
-    purchaseOrder.amountDue -= amount;
+    purchaseOrder.amountDue = Math.max(0, purchaseOrder.amountDue - paymentAmount);
 
     if (purchaseOrder.amountDue === 0) {
       purchaseOrder.status = 'paid';
@@ -292,10 +301,12 @@ export const recordPurchasePayment = async (req, res, next) => {
     // Update supplier if credit transaction
     if (purchaseOrder.paymentMethod === 'credit') {
       const supplier = await Supplier.findById(purchaseOrder.supplier);
-      supplier.creditUsed -= amount;
-      supplier.totalOutstanding -= amount;
-      supplier.lastPaymentDate = new Date();
-      await supplier.save();
+      if (supplier) {
+        supplier.creditUsed = Math.max(0, supplier.creditUsed - paymentAmount);
+        supplier.totalOutstanding = Math.max(0, supplier.totalOutstanding - paymentAmount);
+        supplier.lastPaymentDate = new Date();
+        await supplier.save();
+      }
     }
 
     res.status(201).json({

@@ -543,10 +543,12 @@ export const getSalesReports = async (req, res, next) => {
 
     let dateFilter = {};
     if (startDate && endDate) {
+      const end = new Date(endDate);
+      end.setUTCHours(23, 59, 59, 999);
       dateFilter = {
         createdAt: {
           $gte: new Date(startDate),
-          $lte: new Date(endDate)
+          $lte: end
         }
       };
     } else {
@@ -662,12 +664,17 @@ export const getProfitLossReport = async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
 
-    const dateFilter = startDate && endDate ? {
-      createdAt: {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate)
-      }
-    } : {};
+    let dateFilter = {};
+    if (startDate && endDate) {
+      const end = new Date(endDate);
+      end.setUTCHours(23, 59, 59, 999);
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(startDate),
+          $lte: end
+        }
+      };
+    }
 
     // Sales revenue and cost
     const salesData = await Order.aggregate([
