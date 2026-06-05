@@ -771,7 +771,15 @@ export const getCustomerOutstandingReports = async (req, res, next) => {
         status: 'active'
       })
         .select('companyName email phone totalOutstanding overdueDays accountStatus lastPaymentDate')
-        .sort({ totalOutstanding: -1 });
+        .sort({ totalOutstanding: -1 })
+        .lean();
+
+      const formattedCustomers = outstandingReport.map(c => ({
+        customerName: c.companyName,
+        outstanding: c.totalOutstanding,
+        overdue: ['overdue', 'delinquent'].includes(c.accountStatus) ? c.totalOutstanding : 0,
+        daysOverdue: c.overdueDays || 0
+      }));
 
       const summary = await Customer.aggregate([
         {
@@ -781,6 +789,15 @@ export const getCustomerOutstandingReports = async (req, res, next) => {
           $group: {
             _id: null,
             totalOutstanding: { $sum: '$totalOutstanding' },
+            overdueAmount: {
+              $sum: {
+                $cond: [
+                  { $in: ['$accountStatus', ['overdue', 'delinquent']] },
+                  '$totalOutstanding',
+                  0
+                ]
+              }
+            },
             customerCount: { $sum: 1 }
           }
         }
@@ -789,8 +806,8 @@ export const getCustomerOutstandingReports = async (req, res, next) => {
       res.status(200).json({
         status: 'success',
         data: {
-          customers: outstandingReport,
-          summary: summary[0] || {}
+          customers: formattedCustomers,
+          summary: summary[0] || { totalOutstanding: 0, overdueAmount: 0, customerCount: 0 }
         }
       });
     }
@@ -869,7 +886,11 @@ export const getInventoryValuationReports = async (req, res, next) => {
       status: 'success',
       data: {
         byCategory: valuationReport,
-        overall: overallSummary[0] || {}
+        overall: overallSummary[0] || {},
+        summary: {
+          totalValue: overallSummary[0]?.totalCostValue || 0,
+          totalItems: overallSummary[0]?.totalItems || 0
+        }
       }
     });
   } catch (error) {

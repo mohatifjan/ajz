@@ -39,10 +39,10 @@ export default function ReportsPage() {
         dashboardAPI.getInventoryValuationReports(params)
       ]);
 
-      setSalesReport(salesRes.data);
-      setProfitLossReport(profitRes.data);
-      setCustomerOutstandingReport(customerRes.data);
-      setInventoryValuationReport(inventoryRes.data);
+      setSalesReport(salesRes.data.data);
+      setProfitLossReport(profitRes.data.data);
+      setCustomerOutstandingReport(customerRes.data.data);
+      setInventoryValuationReport(inventoryRes.data.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     } finally {
